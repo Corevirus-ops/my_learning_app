@@ -10,12 +10,8 @@ app.use(cors({
 app.use(express.json());
 
 
-
-
-
-
-const registerRoute = require('./routes/register');
-app.use('/register', registerRoute);
+const authRouter = require('./routes/authRoutes');
+app.use('/auth', authRouter);
 
 app.get("/", (req, res) => {
   res.redirect(process.env.CLIENT_URL);

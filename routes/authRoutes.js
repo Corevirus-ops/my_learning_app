@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../controllers/pg');
 const bcrypt = require('bcrypt');
-const { isLoggedIn, signToken } = require('../controllers/auth');
+const { isLoggedIn, checkLoggedIn, signToken } = require('../controllers/auth');
 const { body, validationResult, oneOf } = require('express-validator');
 
 const handlePassword = async (password) => {
@@ -70,6 +70,7 @@ router.post('/login', isLoggedIn, validateLogin, async (req, res) => {
     const token = signToken({ username: user.username, email: user.email });
     res.status(200).json({ message: 'Login successful', token });
 });
+
 
 module.exports = router;
 

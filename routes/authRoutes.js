@@ -40,7 +40,7 @@ router.post('/register', isLoggedIn, validateRegister, async (req, res) => {
     }
     const user = await createUser(username, email, password);
     const token = signToken({ username: user.username, email: user.email, id: user.id });
-    res.status(201).json({ message: 'User created successfully', token  });
+    res.status(201).json({ message: 'User created successfully', token, user  });
 });
 
 //username or email is required for login

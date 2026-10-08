@@ -86,7 +86,11 @@ export default function Login() {
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
             <button type="submit">Login</button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <button type="button" onClick={() => navigate('/register')}>Register</button>
+            {error && typeof error === 'string' && error.length > 0 && <p style={{ color: 'red' }}>{error}</p>}
+            {error && typeof error !== 'string' && Array.isArray(error) && error.map((err, index) => (
+                <p key={index} style={{ color: 'red' }}>{err.msg}</p>
+            ))}
         </form>
     )
 }

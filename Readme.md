@@ -22,7 +22,7 @@ A learning-assistant web app built with the **PERN** stack (PostgreSQL, Express,
 ## Project Structure
 
     my_learning_app/
-    │   ├── routes/
+    │   ├── routes/ 
     │   ├── app/           # React frontend
     │   ├── controllers/
     │   ├── services/      # overlap + gap analysis

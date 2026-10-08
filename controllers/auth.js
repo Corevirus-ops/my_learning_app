@@ -40,6 +40,7 @@ const getUserFromToken = (req) => {
     if (!tokenData) return null;
     try {
         const decoded = jwt.verify(tokenData, process.env.JWT_SECRET);
+        console.log(decoded);
         return decoded || null;
     } catch (err) {
         return null;

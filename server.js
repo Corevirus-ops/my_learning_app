@@ -1,13 +1,13 @@
 const express = require("express");
 const app = express();
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
 const cors = require("cors");
+app.use(express.json());
 app.use(cors({
     origin: process.env.CLIENT_URL,
     credentials: true
 }));
-app.use(express.json());
+const {getUserFromToken} = require('./controllers/auth');
 
 
 const authRouter = require('./routes/authRoutes');
@@ -16,7 +16,8 @@ const courseRouter = require('./routes/courseRoutes');
 app.use('/courses', courseRouter);
 
 app.get("/", (req, res) => {
-  res.redirect(process.env.CLIENT_URL);
+    const user =  getUserFromToken(req);
+    res.json(user);
 });
 
 const PORT = process.env.PORT || 3000;

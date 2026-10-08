@@ -10,13 +10,6 @@ CREATE TABLE users (
 );
 
 
-CREATE TABLE sessions (
-    id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES users(id),
-    token VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Courses contains courses the user provides to track their own learning. Users provide course links to the courses they are tracking.
 CREATE TABLE courses (
     id SERIAL PRIMARY KEY,

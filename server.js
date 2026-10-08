@@ -11,6 +11,12 @@ app.use(express.json());
 
 
 
+
+
+
+const registerRoute = require('./routes/register');
+app.use('/register', registerRoute);
+
 app.get("/", (req, res) => {
   res.redirect(process.env.CLIENT_URL);
 });

@@ -3,8 +3,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const fetchUser = createAsyncThunk(
   'user/fetchUser',
-  async (token, thunkAPI) => {
-   
+  async (_, thunkAPI) => {
+   const token = localStorage.getItem('token');
     try {
       const response = await fetch(`${import.meta.env.VITE_SERVER}/`, {
         headers: {
@@ -20,6 +20,7 @@ const fetchUser = createAsyncThunk(
     }
   }
 );
+
 
 const initialState = {
   user: null,

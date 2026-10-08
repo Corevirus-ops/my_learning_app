@@ -78,7 +78,7 @@ router.post('/login', isLoggedIn, validateLogin, async (req, res) => {
     }
 
     const token = signToken({ username: user.username, email: user.email, id: user.id });
-    res.status(200).json({ message: 'Login successful', token });
+    res.status(200).json({ message: 'Login successful', token, user });
 });
 
 

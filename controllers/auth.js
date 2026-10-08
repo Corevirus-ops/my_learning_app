@@ -35,5 +35,16 @@ const signToken = (payload) => {
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
+const getUserFromToken = (req) => {
+    const tokenData = req.headers.authorization?.split(' ')[1];
+    if (!tokenData) return null;
+    try {
+        const decoded = jwt.verify(tokenData, process.env.JWT_SECRET);
+        return decoded || null;
+    } catch (err) {
+        return null;
+    }
+};
 
-module.exports = { isLoggedIn, checkLoggedIn, signToken };
+
+module.exports = { isLoggedIn, checkLoggedIn, signToken, getUserFromToken };

@@ -12,6 +12,8 @@ app.use(express.json());
 
 const authRouter = require('./routes/authRoutes');
 app.use('/auth', authRouter);
+const courseRouter = require('./routes/courseRoutes');
+app.use('/courses', courseRouter);
 
 app.get("/", (req, res) => {
   res.redirect(process.env.CLIENT_URL);

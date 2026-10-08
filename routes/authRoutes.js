@@ -18,7 +18,8 @@ const checkUserExists = async (username, email) => {
 
 const createUser = async (username, email, password) => {
     const hashedPassword = await handlePassword(password);
-    await pool.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3)', [username, email, hashedPassword]);
+    const result = await pool.query('INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING username, id, email', [username, email, hashedPassword]);
+    return result.rows[0]; 
 };
 
 const validateRegister = [
@@ -37,8 +38,8 @@ router.post('/register', isLoggedIn, validateRegister, async (req, res) => {
     if (await checkUserExists(username, email)) {
         return res.status(400).json({ message: 'User already exists' });
     }
-    await createUser(username, email, password);
-    const token = signToken({ username, email });
+    const user = await createUser(username, email, password);
+    const token = signToken({ username: user.username, email: user.email, id: user.id });
     res.status(201).json({ message: 'User created successfully', token  });
 });
 
@@ -52,22 +53,31 @@ const validateLogin = [
     
 ];
 
+const loginUser = async (username, email, password) => {
+    const result = await pool.query('SELECT * FROM users WHERE username = $1 OR email = $2', [username, email]);
+    const user = result.rows[0];
+    if (!user) {
+        return null;
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+        return null;
+    }
+    return user;
+};
+
 router.post('/login', isLoggedIn, validateLogin, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
     const { username, email, password } = req.body;
-    const result = await pool.query('SELECT * FROM users WHERE username = $1 OR email = $2', [username, email]);
-    const user = result.rows[0];
+    const user = await loginUser(username, email, password);
     if (!user) {
         return res.status(400).json({ message: 'Invalid username or password' });
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-        return res.status(400).json({ message: 'Invalid username or password' });
-    }
-    const token = signToken({ username: user.username, email: user.email });
+
+    const token = signToken({ username: user.username, email: user.email, id: user.id });
     res.status(200).json({ message: 'Login successful', token });
 });
 

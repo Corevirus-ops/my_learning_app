@@ -1,33 +1,50 @@
 # My Learning App
 
-A learning-assistant web app built with the **PERN** stack (PostgreSQL, Express, React, Node.js). It aggregates courses from platforms like Codecademy and Coursera, tracks progress, detects overlapping content, and recommends what to learn next based on gaps.
+A personal learning tracker for saving courses and learning resources from sites such as Codecademy and Coursera. Users add their own links, organize them with skill labels, track planned hours and completion progress, and review their learning activity.
 
-## Features
+## Current Capabilities
 
-- **Course catalog**: Reference courses from Codecademy, Coursera, and others.
-- **Time tracking**: Total time per course, the sum across all courses, and time spent so far.
-- **Progress tracking**: Completion percentage per course and overall.
-- **Overlap detection**: Compare topics/syllabi across courses to flag redundant content.
-- **Learning history**: Breakdown of completed and in-progress courses by topic, provider, and time.
-- **Gap analysis**: Suggests what to learn next based on missing topics and prerequisites.
+- Register and sign in with a username/email and password.
+- Create, edit, and delete course records with a title, description, link, planned hours, progress, and skill labels.
+- Update hours and progress inline; edits are batched and saved after two seconds without further changes.
+- Search loaded courses locally by title, description, link, and skill labels. Skill entry includes autocomplete suggestions and accepts custom labels.
+- View an overview of planned hours, progress, completed courses, active courses, and focus skills.
+- Review course activity history and filter activity types.
+- View skill insights derived from course labels, progress, and recent updates.
+- Set a weekly active-day goal and timezone. The sidebar streak is calculated from recorded course activity in that timezone.
+- Receive top-bar notifications for recent course activity.
 
-## Tech Stack
+Course links and details are entered by the user; the app does not import course catalogs or course content from external providers.
 
-| Layer    | Technology       |
-|----------|------------------|
-| Database | PostgreSQL       |
-| Backend  | Node.js, Express |
-| Frontend | React            |
+## Data Scope
 
-## Project Structure
+Planned hours are estimates, not a record of time actually spent studying. Activity history and streaks are recorded when courses are added, changed, completed, or deleted through the app. Historical activity from before the activity migration cannot be reconstructed.
 
-    my_learning_app/
-    │   ├── routes/ 
-    │   ├── app/           # React frontend
-    │   ├── controllers/
-    │   ├── services/      # overlap + gap analysis
-    │   └── db/            # schema, migrations
-    └── README.md
+## Stack
+
+| Layer | Technology |
+| --- | --- |
+| Database | PostgreSQL |
+| Backend | Node.js, Express 5 |
+| Frontend | React 19, Vite, Redux Toolkit |
+| Tests | Node `node:test`, Supertest; Vitest, React Testing Library |
+
+## Project Layout
+
+my_learning_app/
+  app/                 React frontend, pages, components, hooks, tests
+  controllers/         PostgreSQL pool and authentication helpers
+  db/                  Initial schema and SQL migrations
+  routes/              Authentication, course, and learning APIs
+  test/                Backend API tests
+  server.js            Express application entry point
+
+## Requirements
+
+- Node.js compatible with Vite 8
+- PostgreSQL
+
+
 
 
 

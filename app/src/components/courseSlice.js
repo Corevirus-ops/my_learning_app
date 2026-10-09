@@ -1,32 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { listCourses } from '../services/courseService';
 
 export const fetchCourses = createAsyncThunk(
   'courses/fetchCourses',
   async (_, { rejectWithValue, signal }) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      return rejectWithValue('Sign in to load your courses.');
-    }
-
     try {
-      const response = await fetch(`${import.meta.env.VITE_SERVER}/courses`, {
-        headers: { Authorization: `Bearer ${token}` },
-        credentials: 'include',
-        signal,
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        return rejectWithValue(data.message || 'Could not load your courses.');
-      }
-
-      if (!Array.isArray(data.courses)) {
-        return rejectWithValue('The server returned an unexpected courses response.');
-      }
-
-      return data.courses;
+      return await listCourses({ signal });
     } catch (error) {
-      if (error.name === 'AbortError') {
+      if (signal.aborted) {
         throw error;
       }
       return rejectWithValue(error.message || 'Could not connect to the server.');

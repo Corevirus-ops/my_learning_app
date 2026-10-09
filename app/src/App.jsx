@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home'; 
-import LearningList from './pages/LearningList';
+import LearningListPage from './pages/LearningListPage';
 import NavBar from './pages/NavBar';
 import TopBar from './pages/TopBar';
 
@@ -37,7 +37,7 @@ function App() {
         <main className="page-content">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/learning-list" element={<LearningList />} />
+            <Route path="/learning-list" element={<LearningListPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
           </Routes>

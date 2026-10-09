@@ -14,6 +14,8 @@ const authRouter = require('./routes/authRoutes');
 app.use('/auth', authRouter);
 const courseRouter = require('./routes/courseRoutes');
 app.use('/courses', courseRouter);
+const learningRouter = require('./routes/learningRoutes');
+app.use('/learning', learningRouter);
 
 app.get("/", (req, res) => {
     const user =  getUserFromToken(req);

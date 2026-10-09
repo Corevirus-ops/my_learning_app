@@ -123,6 +123,11 @@
   line-height: 1.5;
 }
 
+.streak-card small {
+  color: #8fc5a9;
+  font-size: 9px;
+}
+
 .settings-link {
   border-bottom: 1px solid #f0f2f1;
   border-radius: 0;

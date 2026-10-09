@@ -6,6 +6,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home'; 
 import LearningListPage from './pages/LearningListPage';
+import LearningHistory from './pages/LearningHistory';
+import SkillsInsights from './pages/SkillsInsights';
+import Settings from './pages/Settings';
 import NavBar from './pages/NavBar';
 import TopBar from './pages/TopBar';
 
@@ -38,6 +41,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/learning-list" element={<LearningListPage />} />
+            <Route path="/learning-history" element={<LearningHistory />} />
+            <Route path="/skills-insights" element={<SkillsInsights />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
           </Routes>

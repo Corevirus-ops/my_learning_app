@@ -1,5 +1,9 @@
 const coursesUrl = `${import.meta.env.VITE_SERVER}/courses`;
 
+function notifyLearningDataChanged() {
+    window.dispatchEvent(new Event('learning-data-changed'));
+}
+
 async function requestCoursesApi(path, { method = 'GET', body, signal } = {}) {
     const token = localStorage.getItem('token');
     if (!token) throw new Error('Sign in to manage your courses.');
@@ -36,6 +40,7 @@ export async function listCourses({ signal } = {}) {
 
 export async function createCourse(course) {
     const data = await requestCoursesApi('', { method: 'POST', body: course });
+    notifyLearningDataChanged();
     return data.course;
 }
 
@@ -51,9 +56,11 @@ export async function updateCourseOnServer(course) {
             progress: Number(course.progress),
         },
     });
+    notifyLearningDataChanged();
     return data.course;
 }
 
 export async function deleteCourseFromServer(courseId) {
     await requestCoursesApi(`/${courseId}`, { method: 'DELETE' });
+    notifyLearningDataChanged();
 }

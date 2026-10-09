@@ -2,6 +2,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import { setUser } from '../components/userSlice';
+import './Auth.css';
 
 export default function Register() {
     const navigate = useNavigate();
@@ -65,7 +66,7 @@ export default function Register() {
 
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="auth-form register-form" onSubmit={handleSubmit}>
             <input
                 type="text"
                 name="username"

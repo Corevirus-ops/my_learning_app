@@ -1,0 +1,88 @@
+.auth-form {
+  display: grid;
+  width: min(100%, 420px);
+  gap: 13px;
+  margin: 28px auto;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.auth-form::before {
+  color: var(--ink);
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.login-form::before {
+  content: 'Welcome back';
+}
+
+.register-form::before {
+  content: 'Create your account';
+}
+
+.auth-form input:not([type='checkbox']) {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  outline: none;
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.auth-form input:focus {
+  border-color: #79a890;
+  box-shadow: 0 0 0 3px rgb(74 128 108 / 12%);
+}
+
+.auth-form label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.auth-form input[type='checkbox'] {
+  accent-color: var(--green);
+}
+
+.auth-form button {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--green);
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.auth-form button[type='button'] {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--green);
+}
+
+.auth-form button:hover {
+  filter: brightness(0.96);
+}
+
+.auth-form p[style] {
+  color: #bd5147 !important;
+  font-size: 12px;
+}
+
+@media (max-width: 480px) {
+  .auth-form {
+    margin: 16px auto;
+    padding: 22px 18px;
+  }
+}

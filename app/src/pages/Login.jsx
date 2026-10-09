@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {useSelector, useDispatch} from 'react-redux';
 import { setUser } from '../components/userSlice';
+import './Auth.css';
 export default function Login() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -54,7 +55,7 @@ export default function Login() {
   
     };
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="auth-form login-form" onSubmit={handleSubmit}>
             {
                 formData.useEmail ? (
                     <input

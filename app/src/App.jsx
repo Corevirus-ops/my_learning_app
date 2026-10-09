@@ -5,7 +5,9 @@ import { useEffect } from 'react';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home'; 
+import LearningList from './pages/LearningList';
 import NavBar from './pages/NavBar';
+import TopBar from './pages/TopBar';
 
 
 
@@ -28,15 +30,19 @@ function App() {
 
 
   return (
-    <div>
-     <NavBar />
-      <section>
-     <Routes>
-       <Route path="/" element={<Home />} />
-       <Route path="/login" element={<Login />} />
-       <Route path="/register" element={<Register />} />
-     </Routes>
-      </section>
+    <div className="app-shell">
+      <NavBar />
+      <div className="app-main">
+        <TopBar />
+        <main className="page-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/learning-list" element={<LearningList />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </main>
+      </div>
     </div>
   )
 }

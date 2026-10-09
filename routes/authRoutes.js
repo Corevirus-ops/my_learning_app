@@ -54,7 +54,7 @@ const validateLogin = [
 ];
 
 const loginUser = async (username, email, password) => {
-    const result = await pool.query('SELECT * FROM users WHERE username = $1 OR email = $2', [username, email]);
+    const result = await pool.query('SELECT username, email, id, password FROM users WHERE username = $1 OR email = $2', [username, email]);
     const user = result.rows[0];
     if (!user) {
         return null;
@@ -77,8 +77,9 @@ router.post('/login', isLoggedIn, validateLogin, async (req, res) => {
         return res.status(400).json({ message: 'Invalid username or password' });
     }
 
-    const token = signToken({ username: user.username, email: user.email, id: user.id });
-    res.status(200).json({ message: 'Login successful', token, user });
+    const safeUser = { id: user.id, username: user.username, email: user.email };
+    const token = signToken(safeUser);
+    res.status(200).json({ message: 'Login successful', token, user: safeUser });
 });
 
 

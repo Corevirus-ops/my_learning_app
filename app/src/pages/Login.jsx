@@ -22,76 +22,104 @@ export default function Login() {
     });
 
     const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-            try {
-                setError('');
-      const response = await fetch(`${import.meta.env.VITE_SERVER}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: formData.username && formData.username, email: formData.email && formData.email, password: formData.password && formData.password }),
-        credentials: 'include'
-      });
-    
-      const data = await response.json();
-      console.log(data);
-      if (data && data.token && data.user) {
-        localStorage.setItem('token', data.token);
-        dispatch(setUser(data.user));
+        if (isSubmitting) return;
+
         setError('');
-        navigate('/');
-      }
-      else {
-        setError(data?.message || data?.errors || 'Invalid login response');
-      }
-    
-    } catch (error) {
-      console.error(error.message);
-      setError(error.message);
-    }
-  
-    };
-    return (
-        <form className="auth-form login-form" onSubmit={handleSubmit}>
-            {
-                formData.useEmail ? (
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    />
-                ) : <input
-                        type="text"
-                        placeholder="Username"
-                        value={formData.username}
-                        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    />
+        setIsSubmitting(true);
+        try {
+            const identifier = formData.useEmail
+                ? { email: formData.email.trim() }
+                : { username: formData.username.trim() };
+            const response = await fetch(`${import.meta.env.VITE_SERVER}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ...identifier, password: formData.password }),
+                credentials: 'include'
+            });
+
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                const validationMessage = Array.isArray(data?.errors)
+                    ? data.errors.map((item) => item.msg).filter(Boolean).join(' ')
+                    : '';
+                setError(data?.message || validationMessage || 'Login failed. Check your details and try again.');
+                return;
             }
-            <label>
+            if (data?.token && data?.user) {
+                localStorage.setItem('token', data.token);
+                dispatch(setUser(data.user));
+                navigate('/');
+            } else {
+                setError('The server returned an invalid login response.');
+            }
+        } catch {
+            setError('Unable to reach the server. Check your connection and try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleIdentifierModeChange = (e) => {
+        setFormData((current) => ({
+            ...current,
+            username: '',
+            email: '',
+            useEmail: e.target.checked,
+        }));
+    };
+
+    return (
+        <form className="auth-form login-form" onSubmit={handleSubmit} aria-busy={isSubmitting}>
+            <h1>Welcome back</h1>
+            <div className="auth-field">
+                <label className="auth-label" htmlFor="login-identifier">
+                    {formData.useEmail ? 'Email' : 'Username'}
+                </label>
                 <input
+                    id="login-identifier"
+                    type={formData.useEmail ? 'email' : 'text'}
+                    name={formData.useEmail ? 'email' : 'username'}
+                    autoComplete={formData.useEmail ? 'email' : 'username'}
+                    value={formData.useEmail ? formData.email : formData.username}
+                    onChange={(e) => setFormData((current) => ({
+                        ...current,
+                        [e.target.name]: e.target.value,
+                    }))}
+                    required
+                />
+            </div>
+            <label className="auth-toggle" htmlFor="use-email">
+                <input
+                    id="use-email"
                     type="checkbox"
                     checked={formData.useEmail}
-                    onChange={(e) => setFormData({ ...formData, useEmail: e.target.checked })}
+                    onChange={handleIdentifierModeChange}
                 />
-                Use Email
+                Use email address
             </label>
-
-            <input
-                type="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-            <button type="submit">Login</button>
-            <button type="button" onClick={() => navigate('/register')}>Register</button>
-            {error && typeof error === 'string' && error.length > 0 && <p style={{ color: 'red' }}>{error}</p>}
-            {error && typeof error !== 'string' && Array.isArray(error) && error.map((err, index) => (
-                <p key={index} style={{ color: 'red' }}>{err.msg}</p>
-            ))}
+            <div className="auth-field">
+                <label className="auth-label" htmlFor="login-password">Password</label>
+                <input
+                    id="login-password"
+                    type="password"
+                    name="password"
+                    autoComplete="current-password"
+                    value={formData.password}
+                    onChange={(e) => setFormData((current) => ({ ...current, password: e.target.value }))}
+                    required
+                />
+            </div>
+            {error && <p className="auth-error" role="alert">{error}</p>}
+            <button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Signing in...' : 'Login'}
+            </button>
+            <button type="button" onClick={() => navigate('/register')}>Don't Have an Account? Register</button>
         </form>
     )
 }

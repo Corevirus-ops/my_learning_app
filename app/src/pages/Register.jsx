@@ -22,85 +22,118 @@ export default function Register() {
     });
 
     const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData((current) => ({ ...current, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+
         if (formData.password !== formData.confirmPassword) {
             setError('Passwords do not match');
             return;
         }
+
+        setError('');
+        setIsSubmitting(true);
         try {
-            setError('');
             const response = await fetch(`${import.meta.env.VITE_SERVER}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    username: formData.username,
-                    email: formData.email,
+                    username: formData.username.trim(),
+                    email: formData.email.trim(),
                     password: formData.password,
                 }),
                 credentials: 'include'
             });
-            const data = await response.json();
-            console.log(data)
-            if (data && data.token && data.user) {
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                const validationMessage = Array.isArray(data?.errors)
+                    ? data.errors.map((item) => item.msg).filter(Boolean).join(' ')
+                    : '';
+                setError(data?.message || validationMessage || 'Registration failed. Please try again.');
+                return;
+            }
+            if (data?.token && data?.user) {
                 localStorage.setItem('token', data.token);
                 dispatch(setUser(data.user));
-                setError('');
                 navigate('/');
             } else {
-                setError(data?.message || data?.errors || 'Invalid registration response');
+                setError('The server returned an invalid registration response.');
             }
-        } catch (error) {
-            console.error(error.message);
-            setError(error.message);
+        } catch {
+            setError('Unable to reach the server. Check your connection and try again.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
 
     return (
-        <form className="auth-form register-form" onSubmit={handleSubmit}>
-            <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                value={formData.username}
-                onChange={handleChange}
-            />
-            <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-            />
-            <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-            />
-            <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-            />
-            {error && typeof error === 'string' && error.length > 0 && <p style={{ color: 'red' }}>{error}</p>}
-            {error && typeof error !== 'string' && Array.isArray(error) && error.map((err, index) => (
-                <p key={index} style={{ color: 'red' }}>{err.msg}</p>
-            ))}
-            <button type="submit">Register</button>
-            <button type="button" onClick={() => navigate('/login')}>Login</button>
+        <form className="auth-form register-form" onSubmit={handleSubmit} aria-busy={isSubmitting}>
+            <h1>Create your account</h1>
+            <div className="auth-field">
+                <label className="auth-label" htmlFor="register-username">Username</label>
+                <input
+                    id="register-username"
+                    type="text"
+                    name="username"
+                    autoComplete="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <div className="auth-field">
+                <label className="auth-label" htmlFor="register-email">Email</label>
+                <input
+                    id="register-email"
+                    type="email"
+                    name="email"
+                    autoComplete="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <div className="auth-field">
+                <label className="auth-label" htmlFor="register-password">Password</label>
+                <input
+                    id="register-password"
+                    type="password"
+                    name="password"
+                    autoComplete="new-password"
+                    minLength={6}
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <div className="auth-field">
+                <label className="auth-label" htmlFor="register-confirm-password">Confirm password</label>
+                <input
+                    id="register-confirm-password"
+                    type="password"
+                    name="confirmPassword"
+                    autoComplete="new-password"
+                    minLength={6}
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            {error && <p className="auth-error" role="alert">{error}</p>}
+            <button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Creating account...' : 'Register'}
+            </button>
+            <button type="button" onClick={() => navigate('/login')}>Already have an account? Login</button>
         </form>
     );
 }

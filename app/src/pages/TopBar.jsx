@@ -1,15 +1,11 @@
-import {useState} from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import CourseSearch from '../components/topbar/CourseSearch';
+import LearningNotifications from '../components/topbar/LearningNotifications';
 import './TopBar.css';
 export default function TopBar() {
     const user = useSelector((state) => state.user.user);
     const navigate = useNavigate();
-    const [search, setSearch] = useState('');
-    const handleSearch = () => {
-        // Implement search functionality here
-        console.log('Searching for:', search);
-    };
 
     const handleAddLearningLink = () => {
         navigate('/learning-list');
@@ -18,13 +14,9 @@ export default function TopBar() {
         <header className="topbar">
             {user && (
                 <div className="topbar-inner">
-                    <label className="search-box">
-                        <span aria-hidden="true">⌕</span>
-                        <input type="search" aria-label="Search links, notes, and skills" placeholder="Search links, notes, skills..." value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSearch()} />
-                        <kbd>⌘ K</kbd>
-                    </label>
+                    <CourseSearch />
                     <div className="topbar-actions">
-                        <button className="notification-button" aria-label="Notifications" title="Notifications">♧<i /></button>
+                        <LearningNotifications />
                         <button className="primary-button" onClick={handleAddLearningLink}>Add learning link <span aria-hidden="true">→</span></button>
                     </div>
                 </div>

@@ -1,4 +1,6 @@
-export default function CourseEditForm({ form, isSaving, onChange, onSubmit, onCancel }) {
+import SkillPicker from './SkillPicker';
+
+export default function CourseEditForm({ courseId, form, isSaving, onChange, onSubmit, onCancel }) {
     return (
         <form className="course-edit-panel" onSubmit={onSubmit}>
             <label>
@@ -11,7 +13,7 @@ export default function CourseEditForm({ form, isSaving, onChange, onSubmit, onC
             </label>
             <label className="course-edit-description">
                 <span>Description</span>
-                <textarea rows="2" value={form.description} onChange={(event) => onChange('description', event.target.value)} disabled={isSaving} />
+                <textarea rows="3" maxLength="1000" value={form.description} onChange={(event) => onChange('description', event.target.value)} disabled={isSaving} placeholder="Add a note about what you want to learn." />
             </label>
             <label>
                 <span>Planned hours</span>
@@ -36,10 +38,9 @@ export default function CourseEditForm({ form, isSaving, onChange, onSubmit, onC
                 <span>Progress (%)</span>
                 <input type="number" min="0" max="100" step="1" value={form.progress} onChange={(event) => onChange('progress', event.target.value)} disabled={isSaving} required />
             </label>
-            <label className="course-edit-labels">
-                <span>Skills and topics</span>
-                <input type="text" value={form.labels} onChange={(event) => onChange('labels', event.target.value)} placeholder="Comma-separated skills" disabled={isSaving} />
-            </label>
+            <div className="course-edit-labels">
+                <SkillPicker id={`edit-course-${courseId}-skills`} value={form.labels} onChange={(labels) => onChange('labels', labels)} />
+            </div>
             <div className="course-edit-actions">
                 <button type="button" className="course-cancel-button" onClick={onCancel} disabled={isSaving}>Cancel</button>
                 <button type="submit" className="course-save-button" disabled={isSaving}>{isSaving ? 'Saving…' : 'Save changes'}</button>

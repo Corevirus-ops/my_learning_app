@@ -36,17 +36,17 @@
 
 .learning-entry {
   display: grid;
-  grid-template-columns: minmax(90px, 0.55fr) minmax(90px, 0.55fr) minmax(0, 2.5fr) auto;
-  gap: 10px;
-  padding: 19px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 13px 15px;
+  padding: 22px;
 }
 
 .learning-entry #course-title {
-  grid-column: 1 / 3;
+  grid-column: 1;
 }
 
 .learning-entry #course-link {
-  grid-column: 3 / 5;
+  grid-column: 2;
 }
 
 .learning-entry > input,
@@ -63,6 +63,40 @@
   color: var(--ink);
   font-size: 12px;
   outline: 0;
+}
+
+.course-entry-description {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 6px;
+  color: #5d6f65;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.course-entry-description textarea {
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 13px;
+  border: 1px solid #e8edeb;
+  border-radius: 10px;
+  outline: 0;
+  background: #f7f8f9;
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.course-entry-description textarea::placeholder {
+  color: #96a19b;
+}
+
+.course-entry-description textarea:focus {
+  border-color: #87b29d;
+  box-shadow: 0 0 0 3px rgb(74 128 108 / 10%);
 }
 
 .learning-entry > input::placeholder,
@@ -104,7 +138,7 @@
 
 .skill-input-wrap {
   position: relative;
-  grid-column: 3 / 5;
+  grid-column: 1 / 3;
   min-width: 0;
 }
 
@@ -181,8 +215,7 @@
 }
 
 .entry-submit {
-  grid-column: 4;
-  grid-row: 2;
+  grid-column: 3;
   min-height: 41px;
   padding: 0 15px;
   border: 0;
@@ -221,9 +254,9 @@
 }
 
 .skill-picker {
-  grid-column: 1 / -1;
+  grid-column: auto;
   min-width: 0;
-  margin: 2px 0 0;
+  margin: 9px 0 0;
   padding: 0;
   border: 0;
 }
@@ -378,11 +411,11 @@
 
 .saved-course {
   display: grid;
-  grid-template-columns: 25px 38px minmax(0, 1fr) minmax(130px, auto);
+  grid-template-columns: 22px 44px minmax(0, 1fr) minmax(140px, 160px);
   align-items: center;
-  gap: 12px;
+  gap: 15px;
   min-width: 0;
-  padding: 13px;
+  padding: 17px;
   border: 1px solid #e8edeb;
   border-radius: 14px;
   background: #fff;
@@ -402,8 +435,8 @@
 
 .saved-course-avatar {
   display: grid;
-  width: 37px;
-  height: 37px;
+  width: 42px;
+  height: 42px;
   place-items: center;
   border-radius: 11px;
   font-size: 10px;
@@ -417,8 +450,8 @@
 .saved-course-title-row {
   display: flex;
   min-width: 0;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .saved-course-title {
@@ -426,7 +459,7 @@
   flex: 1;
   overflow: hidden;
   color: var(--ink);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -459,33 +492,49 @@
   overflow: hidden;
   margin-top: 4px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.saved-course-description {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 8px 0 0;
+  color: #52645a;
+  font-size: 11px;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.saved-course-description.empty {
+  color: #8a9890;
+  font-style: italic;
 }
 
 .saved-course-labels {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 6px;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .saved-course-labels span {
   max-width: 100%;
   overflow: hidden;
-  padding: 3px 6px;
-  border-radius: 5px;
-  background: #f0f3f2;
-  color: #5c6c63;
-  font-size: 8px;
+  padding: 4px 8px;
+  border-radius: 7px;
+  background: #eaf3ef;
+  color: #426b56;
+  font-size: 9px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .saved-course-progress {
   height: 6px;
-  margin-top: 9px;
+  margin-top: 12px;
   overflow: hidden;
   border-radius: 99px;
   background: #e7ece9;
@@ -600,8 +649,8 @@
   display: grid;
   grid-column: 1 / -1;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 11px;
-  padding: 14px;
+  gap: 14px;
+  padding: 18px;
   border-top: 1px solid #e5ebe7;
   border-radius: 10px;
   background: #f8faf9;
@@ -647,6 +696,10 @@
 .course-edit-labels,
 .course-edit-actions {
   grid-column: 1 / -1;
+}
+
+.course-edit-panel .skill-input-wrap {
+  grid-column: auto;
 }
 
 .course-edit-actions {
@@ -704,8 +757,9 @@
   }
 
   .learning-entry {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    padding: 14px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 11px;
+    padding: 16px;
   }
 
   .learning-entry #course-title,
@@ -713,13 +767,19 @@
     grid-column: 1 / -1;
   }
 
-  .skill-input-wrap {
+  .course-entry-description {
     grid-column: 1 / -1;
   }
 
+  .skill-input-wrap {
+    grid-column: 1 / 3;
+  }
+
   .entry-submit {
-    grid-column: 1 / -1;
+    grid-column: 3;
     grid-row: auto;
+    align-self: start;
+    padding-inline: 10px;
   }
 
   .entry-hint {
@@ -731,14 +791,18 @@
   }
 
   .saved-course {
-    grid-template-columns: 22px 34px minmax(0, 1fr);
-    gap: 9px;
-    padding: 10px;
+    grid-template-columns: 20px 38px minmax(0, 1fr);
+    gap: 10px;
+    padding: 13px;
   }
 
   .saved-course-avatar {
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .saved-course-description {
+    font-size: 10px;
   }
 
   .saved-course-data {
@@ -751,6 +815,11 @@
   .saved-course-data a {
     grid-column: 1 / -1;
     justify-content: flex-start;
+  }
+
+  .course-edit-panel {
+    gap: 10px;
+    padding: 12px;
   }
 }
 

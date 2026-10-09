@@ -237,6 +237,16 @@
   white-space: nowrap;
 }
 
+.item-content .overview-course-description {
+  display: -webkit-box;
+  margin: 7px 0 9px;
+  color: #52645a;
+  line-height: 1.45;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .progress-track {
   height: 6px;
   overflow: hidden;

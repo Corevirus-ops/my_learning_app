@@ -97,6 +97,9 @@ export default function CourseCard({ course, index, saveStatus, onFieldChange, o
                     {completed && <span className="course-complete-badge"><span aria-hidden="true">✓</span>Completed</span>}
                 </div>
                 <p className="saved-course-meta">{getCourseDomain(course.course_link)}</p>
+                <p className={course.description ? 'saved-course-description' : 'saved-course-description empty'}>
+                    {course.description || 'Add a note about what you’re learning.'}
+                </p>
                 <div className="saved-course-labels">
                     {(Array.isArray(course.labels) ? course.labels : []).map((label) => <span key={label}>{label}</span>)}
                 </div>
@@ -149,6 +152,7 @@ export default function CourseCard({ course, index, saveStatus, onFieldChange, o
                 {actionError && <span className="course-save-status error" role="alert">{actionError}</span>}
             </div>
             {isEditing && <CourseEditForm
+                courseId={course.id}
                 form={editForm}
                 isSaving={isSaving}
                 onChange={(field, value) => setEditForm((current) => ({ ...current, [field]: value }))}

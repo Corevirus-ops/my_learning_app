@@ -1,28 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addCourse, clearCourses, fetchCourses, removeCourse, updateCourse } from '../components/courseSlice';
+import { useDispatch } from 'react-redux';
+import { addCourse, removeCourse, updateCourse } from '../components/courseSlice';
 import { createCourse, deleteCourseFromServer, updateCourseOnServer } from '../services/courseService';
+import { useCourseData } from './useCourseData';
 
 const SAVE_DELAY_MS = 2000;
 
 export function useCourseCollection() {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.user.user);
-    const { courses, status, error } = useSelector((state) => state.courses);
+    const { user, courses, status, error } = useCourseData();
     const [saveStatuses, setSaveStatuses] = useState({});
     const pendingCourses = useRef(new Map());
     const syncTimer = useRef(null);
     const inFlightSaves = useRef(new Map());
-
-    useEffect(() => {
-        if (!user) {
-            dispatch(clearCourses());
-            return undefined;
-        }
-
-        const request = dispatch(fetchCourses());
-        return () => request.abort();
-    }, [dispatch, user]);
 
     useEffect(() => () => {
         if (syncTimer.current !== null) window.clearTimeout(syncTimer.current);

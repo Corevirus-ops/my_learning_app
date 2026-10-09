@@ -17,6 +17,10 @@ function getCourseDomain(link) {
     }
 }
 
+function getCourseProgress(course) {
+    return Number(course.progress ?? (course.completed ? 100 : 0)) || 0;
+}
+
 export default function Home() {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.user);
@@ -34,10 +38,12 @@ export default function Home() {
         return () => request.abort();
     }, [dispatch, user]);
 
-    const completedCount = courses.filter((course) => course.completed).length;
+    const completedCount = courses.filter((course) => getCourseProgress(course) >= 100).length;
     const activeCount = courses.length - completedCount;
     const plannedHours = courses.reduce((total, course) => total + (Number(course.hours_to_complete) || 0), 0);
-    const completionPercent = courses.length ? Math.round((completedCount / courses.length) * 100) : 0;
+    const completionPercent = courses.length
+        ? Math.round(courses.reduce((total, course) => total + getCourseProgress(course), 0) / courses.length)
+        : 0;
     const labels = [...new Set(courses.flatMap((course) => Array.isArray(course.labels) ? course.labels : [])
         .filter((label) => typeof label === 'string' && label.trim())
         .map((label) => label.trim()))];
@@ -88,7 +94,7 @@ export default function Home() {
                                 course.hours_to_complete ? `${course.hours_to_complete}h planned` : '',
                                 course.description,
                             ].filter(Boolean).join(' · ');
-                            const progress = course.completed ? 100 : 0;
+                            const progress = getCourseProgress(course);
 
                             return (
                             <article className="learning-item" key={course.id}>
@@ -96,7 +102,7 @@ export default function Home() {
                                 <div className="item-content">
                                     <div className="item-topline">
                                         <strong>{course.course_link ? <a href={course.course_link} target="_blank" rel="noreferrer">{course.title}</a> : course.title}</strong>
-                                        <span>{course.completed ? 'Completed' : 'In progress'}</span>
+                                        <span>{progress >= 100 ? 'Completed' : `${progress}% complete`}</span>
                                     </div>
                                     <p>{detail || 'No course details provided'}</p>
                                     <div className="progress-track"><span style={{ width: `${progress}%` }} /></div>

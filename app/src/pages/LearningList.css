@@ -66,7 +66,8 @@
 }
 
 .learning-entry > input::placeholder,
-.entry-number input::placeholder {
+.entry-number input::placeholder,
+.skill-input-wrap .entry-labels::placeholder {
   color: #96a19b;
 }
 
@@ -101,21 +102,165 @@
   max-width: 105px;
 }
 
+.skill-input-wrap {
+  position: relative;
+  grid-column: 3 / 5;
+  min-width: 0;
+}
+
+.skill-input-wrap .entry-labels {
+  width: 100%;
+  min-height: 41px;
+  padding: 0 13px;
+  border: 1px solid #e8edeb;
+  border-radius: 10px;
+  outline: 0;
+  background: #f7f8f9;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.skill-input-wrap .entry-labels:focus {
+  border-color: #87b29d;
+  box-shadow: 0 0 0 3px rgb(74 128 108 / 10%);
+}
+
+.skill-suggestions {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 5px);
+  right: 0;
+  left: 0;
+  max-height: 230px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgb(25 35 31 / 13%);
+  list-style: none;
+}
+
+.skill-suggestions li {
+  margin: 0;
+}
+
+.skill-suggestions li button {
+  display: flex;
+  width: 100%;
+  min-height: 34px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 11px;
+  text-align: left;
+}
+
+.skill-suggestions li button:hover,
+.skill-suggestions li button.skill-suggestion-active {
+  background: #edf5f0;
+  color: #356d52;
+}
+
+.skill-suggestions li button small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.skill-suggestion-empty {
+  padding: 9px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
 .entry-submit {
+  grid-column: 4;
+  grid-row: 2;
   min-height: 41px;
   padding: 0 15px;
   border: 0;
   border-radius: 10px;
   background: var(--green);
   color: #fff;
-  cursor: default;
+  cursor: pointer;
   font-size: 12px;
+}
+
+.entry-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
 }
 
 .entry-hint {
   grid-column: 1 / -1;
   color: var(--muted);
   font-size: 9px;
+}
+
+.form-status {
+  grid-column: 1 / -1;
+  margin-top: 2px;
+  font-size: 11px;
+}
+
+.form-status.success {
+  color: #397557;
+}
+
+.form-status.error,
+.course-save-status.error,
+.course-list-error {
+  color: #bd5147;
+}
+
+.skill-picker {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin: 2px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.skill-picker legend {
+  margin-bottom: 8px;
+  color: #5d6f65;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.skill-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-option {
+  min-height: 27px;
+  padding: 0 9px;
+  border: 1px solid #e4ebe7;
+  border-radius: 99px;
+  background: #f7f9f8;
+  color: #66756d;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.skill-option:hover {
+  border-color: #9fc2af;
+  color: #3e765d;
+}
+
+.skill-option.selected {
+  border-color: #a6cdb7;
+  background: #eaf4ee;
+  color: #356d52;
 }
 
 .visually-hidden {
@@ -210,8 +355,14 @@
   border-radius: 8px;
   background: transparent;
   color: #75827b;
-  cursor: default;
+  cursor: pointer;
   font-size: 11px;
+}
+
+.collection-filters button:focus-visible,
+.skill-option:focus-visible {
+  outline: 2px solid #6f9c82;
+  outline-offset: 2px;
 }
 
 .collection-filters .filter-active {
@@ -227,7 +378,7 @@
 
 .saved-course {
   display: grid;
-  grid-template-columns: 25px 38px minmax(0, 1fr) 78px;
+  grid-template-columns: 25px 38px minmax(0, 1fr) minmax(130px, auto);
   align-items: center;
   gap: 12px;
   min-width: 0;
@@ -235,6 +386,11 @@
   border: 1px solid #e8edeb;
   border-radius: 14px;
   background: #fff;
+}
+
+.saved-course.completed-course {
+  border-color: #b9d8c7;
+  background: #f8fcf9;
 }
 
 .saved-course-select {
@@ -258,14 +414,39 @@
   min-width: 0;
 }
 
+.saved-course-title-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
 .saved-course-title {
-  display: block;
+  min-width: 0;
+  flex: 1;
   overflow: hidden;
   color: var(--ink);
   font-size: 11px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.course-complete-badge {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 7px;
+  border-radius: 99px;
+  background: #e4f2e9;
+  color: #397557;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.course-complete-badge > span {
+  font-size: 9px;
 }
 
 .saved-course-title:hover,
@@ -322,7 +503,7 @@
   gap: 5px;
 }
 
-.saved-course-data > span {
+.course-edit-field {
   display: flex;
   min-height: 31px;
   align-items: center;
@@ -335,7 +516,22 @@
   font-size: 11px;
 }
 
-.saved-course-data > span small {
+.course-edit-field input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: center;
+}
+
+.course-edit-field input:focus {
+  color: var(--green);
+}
+
+.course-edit-field small {
   color: #77847d;
   font-size: 9px;
 }
@@ -347,6 +543,155 @@
   color: #4b8270;
   font-size: 10px;
   white-space: nowrap;
+}
+
+.saved-course-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.saved-course-actions a,
+.saved-course-actions button {
+  min-height: 27px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border: 1px solid #e5ebe7;
+  border-radius: 7px;
+  background: #fff;
+  color: #4b8270;
+  cursor: pointer;
+  font: inherit;
+  font-size: 9px;
+  text-decoration: none;
+}
+
+.saved-course-actions a {
+  display: inline-flex;
+}
+
+.saved-course-actions button:hover,
+.saved-course-actions a:hover {
+  border-color: #a6cdb7;
+  background: #f1f7f3;
+  color: #356d52;
+}
+
+.saved-course-actions .delete-course-button {
+  border-color: #f0d9d5;
+  color: #b84f45;
+}
+
+.saved-course-actions .delete-course-button:hover {
+  border-color: #e5b7b0;
+  background: #fff5f3;
+  color: #a63830;
+}
+
+.saved-course-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.course-edit-panel {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  padding: 14px;
+  border-top: 1px solid #e5ebe7;
+  border-radius: 10px;
+  background: #f8faf9;
+}
+
+.course-edit-panel label {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+  color: #63736a;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.course-edit-panel input,
+.course-edit-panel textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 1px solid #e2e9e5;
+  border-radius: 8px;
+  outline: 0;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.course-edit-panel textarea {
+  min-height: 57px;
+  resize: vertical;
+}
+
+.course-edit-panel input:focus,
+.course-edit-panel textarea:focus {
+  border-color: #87b29d;
+  box-shadow: 0 0 0 3px rgb(74 128 108 / 10%);
+}
+
+.course-edit-description,
+.course-edit-labels,
+.course-edit-actions {
+  grid-column: 1 / -1;
+}
+
+.course-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.course-edit-actions button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid #e1e9e4;
+  border-radius: 8px;
+  background: #fff;
+  color: #596b61;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.course-edit-actions .course-save-button {
+  border-color: var(--green);
+  background: var(--green);
+  color: #fff;
+}
+
+.course-edit-actions button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.course-save-status {
+  color: var(--muted);
+  font-size: 9px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.course-save-status.saved {
+  color: #397557;
+}
+
+.course-list-message {
+  padding: 16px 3px;
+  color: var(--muted);
+  font-size: 12px;
 }
 
 @media (max-width: 720px) {
@@ -364,13 +709,17 @@
   }
 
   .learning-entry #course-title,
-  .learning-entry #course-link,
-  .learning-entry > .entry-labels {
+  .learning-entry #course-link {
+    grid-column: 1 / -1;
+  }
+
+  .skill-input-wrap {
     grid-column: 1 / -1;
   }
 
   .entry-submit {
     grid-column: 1 / -1;
+    grid-row: auto;
   }
 
   .entry-hint {

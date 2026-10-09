@@ -20,7 +20,8 @@ CREATE TABLE courses (
     completed BOOLEAN DEFAULT FALSE,
     user_id INT NOT NULL REFERENCES users(id),
     course_link VARCHAR(255),
-    labels TEXT[]
+    labels TEXT[],
+    progress INT NOT NULL DEFAULT 0 CHECK (progress BETWEEN 0 AND 100)
 );
 
 

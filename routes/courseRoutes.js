@@ -29,10 +29,11 @@ router.get('/:id', checkLoggedIn, async (req, res) => {
 
 const validateCourse = [
     body('title').notEmpty().withMessage('Title is required'),
-    body('description').notEmpty().withMessage('Description is required'),
+    body('description').optional({ checkFalsy: true }).isString(),
     body('hours_to_complete').isInt({ min: 1 }).withMessage('Hours to complete must be a positive integer'),
     body('course_link').isURL().withMessage('Course link must be a valid URL'),
-    body('labels').isArray().withMessage('Labels must be an array')
+    body('labels').isArray().withMessage('Labels must be an array'),
+    body('progress').optional().isInt({ min: 0, max: 100 }).withMessage('Progress must be between 0 and 100')
 ]; 
 
 router.post('/', checkLoggedIn, validateCourse, async (req, res) => {
@@ -45,7 +46,11 @@ router.post('/', checkLoggedIn, validateCourse, async (req, res) => {
         return res.status(401).json({ message: 'Unauthorized' });
     }
     const { title, description, hours_to_complete, course_link, labels } = req.body;
-    const result = await pg.query('INSERT INTO courses (user_id, title, description, hours_to_complete, course_link, labels) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [user.id, title, description, hours_to_complete, course_link, labels]);
+    const progress = Number(req.body.progress || 0);
+    const result = await pg.query(
+        'INSERT INTO courses (user_id, title, description, hours_to_complete, course_link, labels, progress, completed) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+        [user.id, title, description || null, hours_to_complete, course_link, labels, progress, progress === 100]
+    );
     res.status(201).json({ message: 'Course created successfully', course: result.rows[0] });
 });
 
@@ -60,7 +65,11 @@ router.put('/:id', checkLoggedIn, validateCourse, async (req, res) => {
     }
     const { id } = req.params;
     const { title, description, hours_to_complete, course_link, labels } = req.body;
-    const result = await pg.query('UPDATE courses SET title = $1, description = $2, hours_to_complete = $3, course_link = $4, labels = $5 WHERE id = $6 AND user_id = $7 RETURNING *', [title, description, hours_to_complete, course_link, labels, id, user.id]);
+    const progress = req.body.progress === undefined ? null : Number(req.body.progress);
+    const result = await pg.query(
+        'UPDATE courses SET title = $1, description = $2, hours_to_complete = $3, course_link = $4, labels = $5, progress = COALESCE($6, progress), completed = CASE WHEN $6 IS NULL THEN completed ELSE $6 = 100 END WHERE id = $7 AND user_id = $8 RETURNING *',
+        [title, description || null, hours_to_complete, course_link, labels, progress, id, user.id]
+    );
     if (result.rows.length === 0) {
         return res.status(404).json({ message: 'Course not found or not authorized' });
     }

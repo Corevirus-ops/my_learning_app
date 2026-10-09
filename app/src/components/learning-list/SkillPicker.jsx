@@ -7,8 +7,9 @@ const popularSkills = ['HTML', 'CSS', 'JavaScript', 'React', 'Node.js', 'SQL', '
 export default function SkillPicker({ id, value, onChange, placeholder = 'Start typing a skill', showPopular = true }) {
     const [isFocused, setIsFocused] = useState(false);
     const [activeSuggestion, setActiveSuggestion] = useState(-1);
-    const selectedSkills = parseCourseLabels(value).map((skill) => skill.toLowerCase());
-    const query = value.split(',').at(-1).trim();
+    const labelParts = value.split(',');
+    const query = labelParts.at(-1).trim();
+    const selectedSkills = labelParts.slice(0, -1).map((skill) => skill.trim().toLowerCase()).filter(Boolean);
     const matchingSkills = query
         ? skillCatalog
             .filter((skill) => skill.toLowerCase().includes(query.toLowerCase()) && !selectedSkills.includes(skill.toLowerCase()))

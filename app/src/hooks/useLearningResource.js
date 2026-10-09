@@ -3,33 +3,30 @@ import { useSelector } from 'react-redux';
 
 export function useLearningResource(loader, initialData) {
     const user = useSelector((state) => state.user.user);
-    const [data, setData] = useState(initialData);
-    const [status, setStatus] = useState('idle');
-    const [error, setError] = useState('');
+    const [resource, setResource] = useState({ userId: null, data: initialData, status: 'idle', error: '' });
+    const currentResource = user?.id === resource.userId
+        ? resource
+        : { data: initialData, status: user ? 'loading' : 'idle', error: '' };
 
     useEffect(() => {
-        if (!user) {
-            setData(initialData);
-            setStatus('idle');
-            setError('');
-            return undefined;
-        }
+        if (!user) return undefined;
 
         let controller;
         const loadResource = () => {
             controller?.abort();
             controller = new AbortController();
-            setStatus('loading');
-            setError('');
             loader({ signal: controller.signal })
                 .then((result) => {
-                    setData(result);
-                    setStatus('succeeded');
+                    setResource({ userId: user.id, data: result, status: 'succeeded', error: '' });
                 })
                 .catch((requestError) => {
                     if (requestError.name !== 'AbortError') {
-                        setError(requestError.message || 'Could not load this information.');
-                        setStatus('failed');
+                        setResource({
+                            userId: user.id,
+                            data: initialData,
+                            status: 'failed',
+                            error: requestError.message || 'Could not load this information.',
+                        });
                     }
                 });
         };
@@ -42,5 +39,5 @@ export function useLearningResource(loader, initialData) {
         };
     }, [initialData, loader, user]);
 
-    return { user, data, status, error };
+    return { user, ...currentResource };
 }

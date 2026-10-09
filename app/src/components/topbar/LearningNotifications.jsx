@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLearningResource } from '../../hooks/useLearningResource';
 import { getLearningHistory } from '../../services/learningService';
 
 const initialHistory = { activities: [], timezone: 'UTC' };
+const emptyActivities = [];
 
 const activityLabels = {
     course_added: 'Added to your list',
@@ -34,23 +35,11 @@ function formatNotificationTime(value, timezone) {
 export default function LearningNotifications() {
     const { user, data, status } = useLearningResource(getLearningHistory, initialHistory);
     const [isOpen, setIsOpen] = useState(false);
-    const [lastSeenId, setLastSeenId] = useState('0');
-    const activities = data.activities || [];
+    const activities = data.activities ?? emptyActivities;
     const storageKey = user ? `learning-notifications-seen-${user.id}` : null;
+    const storedLastSeenId = storageKey ? localStorage.getItem(storageKey) : null;
+    const lastSeenId = storedLastSeenId ?? (status === 'succeeded' ? String(activities[0]?.id || 0) : '0');
     const unreadCount = activities.filter((activity) => isNewerActivity(activity.id, lastSeenId)).length;
-
-    useEffect(() => {
-        if (!storageKey || status !== 'succeeded') return;
-        const storedId = localStorage.getItem(storageKey);
-        if (storedId !== null) {
-            setLastSeenId(storedId);
-            return;
-        }
-
-        const newestId = String(activities[0]?.id || 0);
-        localStorage.setItem(storageKey, newestId);
-        setLastSeenId(newestId);
-    }, [activities, status, storageKey]);
 
     const handleToggle = () => {
         const willOpen = !isOpen;
@@ -58,7 +47,6 @@ export default function LearningNotifications() {
         if (willOpen && storageKey && activities.length) {
             const newestId = String(activities[0].id);
             localStorage.setItem(storageKey, newestId);
-            setLastSeenId(newestId);
         }
     };
 

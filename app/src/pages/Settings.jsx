@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { getLearningSettings, saveLearningSettings } from '../services/learningService';
 import { useLearningResource } from '../hooks/useLearningResource';
 import './Settings.css';
@@ -25,18 +25,18 @@ function getTimezoneLabel(timezone) {
 
 export default function Settings() {
     const { user, data, status, error } = useLearningResource(getLearningSettings, initialSettings);
-    const [form, setForm] = useState(initialSettings);
+    const [formDraft, setFormDraft] = useState(null);
     const [saveState, setSaveState] = useState({ type: '', message: '' });
     const [isSaving, setIsSaving] = useState(false);
+    const savedForm = {
+        weekly_active_goal: String(data.weekly_active_goal),
+        timezone: data.timezone || 'UTC',
+    };
+    const form = formDraft?.userId === user?.id ? formDraft.values : savedForm;
 
-    useEffect(() => {
-        if (status === 'succeeded') {
-            setForm({
-                weekly_active_goal: String(data.weekly_active_goal),
-                timezone: data.timezone || 'UTC',
-            });
-        }
-    }, [data, status]);
+    const updateForm = (field, value) => {
+        setFormDraft({ userId: user.id, values: { ...form, [field]: value } });
+    };
 
     const timezoneOptions = [...new Set([
         form.timezone,
@@ -53,7 +53,10 @@ export default function Settings() {
                 weekly_active_goal: Number(form.weekly_active_goal),
                 timezone: form.timezone,
             });
-            setForm({ weekly_active_goal: String(saved.weekly_active_goal), timezone: saved.timezone });
+            setFormDraft({
+                userId: user.id,
+                values: { weekly_active_goal: String(saved.weekly_active_goal), timezone: saved.timezone },
+            });
             setSaveState({ type: 'success', message: 'Preferences saved.' });
         } catch (saveError) {
             setSaveState({ type: 'error', message: saveError.message || 'Could not save your preferences.' });
@@ -87,7 +90,7 @@ export default function Settings() {
                     </div>
                     <label className="settings-field">
                         <span>Active days each week</span>
-                        <select value={form.weekly_active_goal} onChange={(event) => setForm((current) => ({ ...current, weekly_active_goal: event.target.value }))}>
+                        <select value={form.weekly_active_goal} onChange={(event) => updateForm('weekly_active_goal', event.target.value)}>
                             {[1, 2, 3, 4, 5, 6, 7].map((days) => <option key={days} value={days}>{days} {days === 1 ? 'day' : 'days'} per week</option>)}
                         </select>
                     </label>
@@ -100,7 +103,7 @@ export default function Settings() {
                     </div>
                     <label className="settings-field">
                         <span>Your time zone</span>
-                        <select value={form.timezone} onChange={(event) => setForm((current) => ({ ...current, timezone: event.target.value }))}>
+                        <select value={form.timezone} onChange={(event) => updateForm('timezone', event.target.value)}>
                             {timezoneOptions.map((timezone) => <option key={timezone} value={timezone}>{getTimezoneLabel(timezone)}</option>)}
                         </select>
                     </label>

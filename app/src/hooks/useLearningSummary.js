@@ -4,28 +4,26 @@ import { getLearningSummary } from '../services/learningService';
 
 export function useLearningSummary() {
     const user = useSelector((state) => state.user.user);
-    const [summary, setSummary] = useState(null);
-    const [status, setStatus] = useState('idle');
+    const [summaryState, setSummaryState] = useState({ userId: null, summary: null, status: 'idle' });
+    const currentState = user?.id === summaryState.userId
+        ? summaryState
+        : { summary: null, status: user ? 'loading' : 'idle' };
 
     useEffect(() => {
-        if (!user) {
-            setSummary(null);
-            setStatus('idle');
-            return undefined;
-        }
+        if (!user) return undefined;
 
         let controller;
         const loadSummary = () => {
             controller?.abort();
             controller = new AbortController();
-            setStatus('loading');
             getLearningSummary({ signal: controller.signal })
                 .then((data) => {
-                    setSummary(data);
-                    setStatus('succeeded');
+                    setSummaryState({ userId: user.id, summary: data, status: 'succeeded' });
                 })
                 .catch((error) => {
-                    if (error.name !== 'AbortError') setStatus('failed');
+                    if (error.name !== 'AbortError') {
+                        setSummaryState({ userId: user.id, summary: null, status: 'failed' });
+                    }
                 });
         };
 
@@ -37,5 +35,5 @@ export function useLearningSummary() {
         };
     }, [user]);
 
-    return { summary, status };
+    return currentState;
 }

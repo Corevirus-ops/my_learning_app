@@ -4,6 +4,9 @@ import { setUser, fetchUser } from './components/userSlice';
 import { useEffect } from 'react';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Home from './pages/Home'; 
+import NavBar from './pages/NavBar';
+
 
 
 function App() {
@@ -23,19 +26,18 @@ function App() {
 
   }, []);
 
-  const handleLogout = () => {
-    dispatch(setUser(null));
-    localStorage.removeItem('token');
-  };
 
   return (
-    <>
+    <div>
+     <NavBar />
+      <section>
      <Routes>
-       <Route path="/" element={<h1>Hello {user ? user.username : "World"}<button onClick={handleLogout}>Logout</button></h1>} />
+       <Route path="/" element={<Home />} />
        <Route path="/login" element={<Login />} />
        <Route path="/register" element={<Register />} />
      </Routes>
-    </>
+      </section>
+    </div>
   )
 }
 
